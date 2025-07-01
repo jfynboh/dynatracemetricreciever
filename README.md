@@ -1,5 +1,5 @@
 # Dynatrace Metric Receiver
-Implementation of an Otel Metric Receiver for the Dynatrace Metric ingest protocol.
+Implementation of an Otel Metric Receiver for the Dynatrace Metric ingest protocol (https://docs.dynatrace.com/docs/ingest-from/extend-dynatrace/extend-metrics/reference/metric-ingestion-protocol).
 
 
 
