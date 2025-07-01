@@ -1,0 +1,41 @@
+receivers:
+  # otlp:
+  #   protocols:
+  #     grpc:
+  #       endpoint: 0.0.0.0:14317
+  #     http:
+  #       endpoint: 0.0.0.0:14318
+  dynatracemetric:
+        endpoint: 127.0.0.1:14499
+processors:
+  batch:
+  resourcedetection/dynatrace:
+    override: false
+    detectors: [dynatrace]
+
+exporters:
+  debug:
+    verbosity: detailed
+  otlphttp:
+    endpoint: "https://<tenant>.live.dynatrace.com/api/v2/otlp"
+    headers:
+      Authorization: "Api-Token dt0c01.XXXX.YYYYYYYY"
+
+service:
+  pipelines:
+    # traces:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [debug]
+    metrics:
+      receivers: [dynatracemetric]
+      processors: [resourcedetection/dynatrace]
+      exporters: [otlphttp,debug]
+    # logs:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [debug]
+  telemetry:
+    metrics:
+      level: none
+
