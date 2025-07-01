@@ -76,7 +76,6 @@ receivers:
   dynatracemetric:
         endpoint: 127.0.0.1:14499
 processors:
-  batch:
   resourcedetection/dynatrace:
     override: false
     detectors: [dynatrace]
