@@ -100,3 +100,10 @@ service:
       level: none
 
 ```
+
+To run newly build collector:
+
+```
+otelcol-dev/otelcol-dev --config collector-config.yaml
+```
+
