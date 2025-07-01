@@ -31,22 +31,32 @@ builder-config.yaml:
 ```yaml
 dist:
   name: otelcol-dev
-  description: Basic OTel Collector distribution that includes the Dynatrace Processor
+  description: Basic OTel Collector distribution for Developers
   output_path: ./otelcol-dev
-  otelcol_version: 0.128.0
 
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.128.0
+  - gomod:
+      # NOTE: Prior to v0.86.0 use the `loggingexporter` instead of `debugexporter`.
+      go.opentelemetry.io/collector/exporter/debugexporter v0.128.0
   - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.128.0
   - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.128.0
 
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.128.0
-  - gomod: github.com/Reinhard-Pilz-Dynatrace/dynatraceprocessor v0.128.3
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.128.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/processor/deltatocumulativeprocessor v0.128.0
+
+
 
 receivers:
   - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.128.0
-  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.128.0
+  - gomod: github.com/jfynboh/dyantracemetricreceiver v0.128.0
+    path: "receiver"
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.128.0
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver v0.128.0
+  - gomod:  github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filestatsreceiver v0.128.0
+  
+
 
 providers:
   - gomod: go.opentelemetry.io/collector/confmap/provider/envprovider v1.18.0
