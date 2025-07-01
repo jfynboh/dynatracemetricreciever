@@ -48,8 +48,8 @@ receivers:
 
 The example below of a valid `collector-config.yaml` shows how to configure an OpenTelemetry Collector to
 * Recieve metrics on port 14499
-* Print out the Log Signals on stdout
-* Send off the collected logs to Dynatrace
+* Print out the metric Signals on stdout
+* Send off the collected metrics to Dynatrace
   - The configured `Api-Token` needs to contain the permissions `ingest.logs`
 
 ```yaml
