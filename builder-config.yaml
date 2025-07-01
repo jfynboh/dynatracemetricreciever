@@ -20,7 +20,7 @@ processors:
 receivers:
   - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.128.0
   - gomod: github.com/jfynboh/dyantracemetricreceiver v0.128.0
-    path: "receiver/dynatracemetricreceiver"
+    path: "receiver"
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.128.0
   - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/receiver/redisreceiver v0.128.0
   - gomod:  github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filestatsreceiver v0.128.0

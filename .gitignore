@@ -1,0 +1,8 @@
+ocb
+otelcol-dev/otelcol-dev
+otelcol-dev/components.go
+otelcol-dev/go.mod
+otelcol-dev/go.sum
+otelcol-dev/main_others.go
+otelcol-dev/main_windows.go
+otelcol-dev/main.go
