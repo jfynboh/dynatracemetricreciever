@@ -23,8 +23,9 @@ https://github.com/open-telemetry/opentelemetry-collector-releases/releases/down
 chmod +x ocb
 ```
 To Build:
+```
  ./ocb --config builder-config.yaml 
-
+```
 
 builder-config.yaml:
 ```yaml
