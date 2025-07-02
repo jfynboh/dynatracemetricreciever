@@ -110,7 +110,7 @@ service:
 
 ```
 
-To run newly build collector:
+To run newly built collector:
 
 ```
 otelcol-dev/otelcol-dev --config collector-config.yaml
