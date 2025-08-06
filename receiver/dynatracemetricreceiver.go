@@ -1,10 +1,8 @@
 package dynatracemetricreceiver
 
 import (
-	//	"bufio"
 	"bufio"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -115,17 +113,12 @@ func (r *dynatraceMetricReceiver) handle(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	result := Result{
-		Error:        "null",
-		LinesOK:      metricsCount,
-		LinesInvalid: 0,
-	}
+        result := fmt.Sprintf("{ \"error\": null, \"linesOk\": %d, \"linesInvalid\": 0}",metricsCount)
 
-	resp, _ := json.Marshal(result)
 	w.Header().Add("Content-Type", "application/json")
 	w.Header().Add("Server", "EEC")
 	w.WriteHeader(http.StatusAccepted)
-	w.Write(resp)
+	w.Write([]byte(result))
 }
 
 /*
