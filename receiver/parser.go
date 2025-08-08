@@ -1,5 +1,4 @@
 package dynatracemetricreceiver
-
 import (
 	"fmt"
 	"strconv"
@@ -35,15 +34,16 @@ func parseLine(line string) *Metric {
 	metricName, dimensions := parseMetricAndDimensions(metricPart)
 
 	var (
-		value     *float64
-		summary   map[string]float64
-		mType     string
+		value    *float64
+		summary  map[string]float64
+		mType    string
 		timestamp *int64
 	)
 
 	typeOrValue := parts[1]
 	tokens := strings.Split(typeOrValue, ",")
 
+	// Parse metric type and value
 	if len(tokens) == 1 {
 		if isSimpleNumber(tokens[0]) {
 			v, _ := strconv.ParseFloat(tokens[0], 64)
@@ -62,8 +62,7 @@ func parseLine(line string) *Metric {
 			value = &v
 		} else if mType == "count" {
 			for _, pair := range tokens[1:] {
-				kv := strings.SplitN(pair, "=", 2)
-				if len(kv) == 2 && kv[0] == "delta" {
+				if kv := strings.SplitN(pair, "=", 2); len(kv) == 2 && kv[0] == "delta" {
 					if f, err := strconv.ParseFloat(kv[1], 64); err == nil {
 						value = &f
 					}
@@ -72,8 +71,7 @@ func parseLine(line string) *Metric {
 		} else {
 			summary = make(map[string]float64)
 			for _, pair := range tokens[1:] {
-				kv := strings.SplitN(pair, "=", 2)
-				if len(kv) == 2 {
+				if kv := strings.SplitN(pair, "=", 2); len(kv) == 2 {
 					if f, err := strconv.ParseFloat(kv[1], 64); err == nil {
 						summary[kv[0]] = f
 					}
@@ -82,15 +80,18 @@ func parseLine(line string) *Metric {
 		}
 	}
 
-	if len(parts) >= 3 {
-		last := parts[len(parts)-1]
-		if ts, err := strconv.ParseInt(last, 10, 64); err == nil {
-			timestamp = &ts
+	// Safely extract timestamp: look for last numeric field
+	for i := len(parts) - 1; i > 1; i-- {
+		if tsVal, err := strconv.ParseInt(parts[i], 10, 64); err == nil {
+			timestamp = new(int64)
+			*timestamp = tsVal * 1000000
+			break
 		}
 	}
 
+	// Fallback to current time if no timestamp found
 	if timestamp == nil {
-		now := time.Now().UnixNano() / int64(time.Nanosecond)
+		now := time.Now().UnixNano()
 		timestamp = &now
 	}
 
@@ -227,26 +228,27 @@ func ConvertToOtelMetrics(m Metric) pmetric.Metrics {
 // -------------------------
 // Example usage
 // -------------------------
+/*
+ func main() {
+ 	testData := `workHours,team="devops\\bugfixing",project="\"product\"_improvement" 1000
+ mymetric,team=teamA,businessapp=hr 1000 1754668597000
+ mymetric,team=teamA,businessapp=hr 1000 1609459200000
+ cpu.temperature,hostname=hostA,cpu=1 55 1754668597000
+ cpu.temperature,hostname=hostA,cpu=2 45 1754668597000
+ cpu.temperature,hostname=hostA,cpu=1 gauge,45 1754668597000
+ cpu.temperature,hostname=hostA,cpu=1 gauge,min=17.1,max=17.3,sum=34.4,count=2 1754668597000
+ cpu.temperature,dt.entity.host=HOST-4587AE40F95AD90D,cpu=1 gauge,min=17.1,max=17.3,sum=34.4,count=2 1754668597000
+ new_user_count,region=EAST count,delta=50 1754668597000
+ new_user_count,region=WEST count,delta=150 1754668597000
+ cpu.temperature gauge,45 1754668597000
+ #cpu.temperature gauge dt.meta.unit=count,dt.meta.description="The temperature of the CPU",dt.meta.displayname="CPU temperature"`
 
-// func main() {
-// 	testData := `workHours,team="devops\\bugfixing",project="\"product\"_improvement" 1000
-// mymetric,team=teamA,businessapp=hr 1000
-// mymetric,team=teamA,businessapp=hr 1000 1609459200000
-// cpu.temperature,hostname=hostA,cpu=1 55
-// cpu.temperature,hostname=hostA,cpu=2 45
-// cpu.temperature,hostname=hostA,cpu=1 gauge,45
-// cpu.temperature,hostname=hostA,cpu=1 gauge,min=17.1,max=17.3,sum=34.4,count=2
-// cpu.temperature,dt.entity.host=HOST-4587AE40F95AD90D,cpu=1 gauge,min=17.1,max=17.3,sum=34.4,count=2
-// new_user_count,region=EAST count,delta=50
-// new_user_count,region=WEST count,delta=150
-// cpu.temperature gauge,45
-// #cpu.temperature gauge dt.meta.unit=count,dt.meta.description="The temperature of the CPU",dt.meta.displayname="CPU temperature"`
-
-// 	scanner := bufio.NewScanner(strings.NewReader(testData))
-// 	for scanner.Scan() {
-// 		line := scanner.Text()
-// 		if metric := parseLine(line); metric != nil {
-// 			fmt.Printf("%+v\n", metric)
-// 		}
-// 	}
-// }
+ 	scanner := bufio.NewScanner(strings.NewReader(testData))
+ 	for scanner.Scan() {
+ 		line := scanner.Text()
+ 		if metric := parseLine(line); metric != nil {
+			fmt.Printf("%+v ts: %d \n", metric, *metric.Timestamp)
+ 		}
+ 	}
+ }
+ */
